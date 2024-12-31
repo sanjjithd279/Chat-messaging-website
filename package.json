@@ -1,0 +1,19 @@
+{
+  "name": "easychat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node backend/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanjjithd279/Chat-messaging-website.git"
+  },
+  "author": "Sanjjithsaai Dineshkumar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sanjjithd279/Chat-messaging-website/issues"
+  },
+  "homepage": "https://github.com/sanjjithd279/Chat-messaging-website#readme",
+  "description": ""
+}
