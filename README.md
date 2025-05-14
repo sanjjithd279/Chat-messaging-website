@@ -129,7 +129,7 @@ chat-messaging-website/
 
 - Sanjjithsaai Dineshkumar
 
-## Feature Developments
+## Future Developments
 Host website once official course and professor permissions come through.
 
 
