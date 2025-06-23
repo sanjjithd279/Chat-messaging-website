@@ -18,25 +18,20 @@ import {
 } from "lucide-react";
 
 const Navbar = () => {
+  // All hooks at the top, always called
   const { authUser, logout } = useAuthStore();
   const { theme } = useThemeStore();
   const { classes } = useClassStore();
   const { setSelectedUser, setSelectedClass } = useChatStore();
   const navigate = useNavigate();
   const location = useLocation();
-
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const searchRef = useRef(null);
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
-
-  // Handle search functionality
   useEffect(() => {
+    if (!authUser) return;
     if (searchQuery.trim() === "") {
       setSearchResults([]);
       setShowSearchResults(false);
@@ -66,6 +61,7 @@ const Navbar = () => {
     classes.forEach((classData) => {
       classData.students.forEach((student) => {
         if (
+          authUser &&
           student._id !== authUser._id && // Don't show current user
           (student.fullName.toLowerCase().includes(query) ||
             student.email.toLowerCase().includes(query))
@@ -91,7 +87,15 @@ const Navbar = () => {
 
     setSearchResults(results.slice(0, 8)); // Limit to 8 results
     setShowSearchResults(results.length > 0);
-  }, [searchQuery, classes, authUser._id]);
+  }, [searchQuery, classes, authUser]);
+
+  // All logic and hooks above, now use conditional rendering in return
+  if (!authUser) return <></>;
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   // Handle click outside search results
   useEffect(() => {
@@ -125,8 +129,6 @@ const Navbar = () => {
     setSearchResults([]);
     setShowSearchResults(false);
   };
-
-  if (!authUser) return null;
 
   return (
     <div className="navbar bg-base-100 border-b border-base-300">

@@ -42,7 +42,7 @@ const App = () => {
 
   return (
     <div data-theme={theme} className="flex flex-col h-screen">
-      <Navbar />
+      {authUser && <Navbar />}
       <main className="flex-1 overflow-hidden">
         <Routes>
           <Route
