@@ -133,17 +133,10 @@ chat-messaging-website/
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 👥 Authors
 
-- Your Name - Initial work
+- Sanjjithsaai Dineshkumar
 
-## 🙏 Acknowledgments
+## Future Developments
 
-- Socket.IO for real-time communication
-- Cloudinary for image storage
-- MongoDB for database
-- React and Node.js communities
+Host website once official course and professor permissions come through.
