@@ -3,6 +3,7 @@ import Message from "../models/message.model.js";
 
 import cloudinary from "../lib/cloudinary.js";
 import { io, getReveiverSocketId } from "../lib/socket.js";
+
 export const getUsersForSidebar = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
@@ -13,6 +14,86 @@ export const getUsersForSidebar = async (req, res) => {
     res.status(200).json(filteredUsers);
   } catch (error) {
     console.log("Error in getUsersForSidebar: ", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getClassStudents = async (req, res) => {
+  try {
+    const { classId } = req.params;
+    const loggedInUserId = req.user._id;
+
+    // Import Class model here to avoid circular dependency
+    const Class = (await import("../models/class.model.js")).default;
+
+    const classData = await Class.findById(classId).populate(
+      "students",
+      "fullName email profilePic"
+    );
+
+    if (!classData) {
+      return res.status(404).json({ message: "Class not found" });
+    }
+
+    // Check if user is enrolled in this class
+    if (
+      !classData.students.some(
+        (student) => student._id.toString() === loggedInUserId.toString()
+      )
+    ) {
+      return res
+        .status(403)
+        .json({ message: "You are not enrolled in this class" });
+    }
+
+    // Filter out the current user from the students list
+    const otherStudents = classData.students.filter(
+      (student) => student._id.toString() !== loggedInUserId.toString()
+    );
+
+    res.status(200).json(otherStudents);
+  } catch (error) {
+    console.log("Error in getClassStudents controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getUsersByClass = async (req, res) => {
+  try {
+    const { classId } = req.params;
+    const loggedInUserId = req.user._id;
+
+    // Import Class model here to avoid circular dependency
+    const Class = (await import("../models/class.model.js")).default;
+
+    const classData = await Class.findById(classId).populate(
+      "students",
+      "fullName email profilePic"
+    );
+
+    if (!classData) {
+      return res.status(404).json({ message: "Class not found" });
+    }
+
+    // Check if user is enrolled in this class
+    if (
+      !classData.students.some(
+        (student) => student._id.toString() === loggedInUserId.toString()
+      )
+    ) {
+      return res
+        .status(403)
+        .json({ message: "You are not enrolled in this class" });
+    }
+
+    // Filter out the current user from the students list
+    const otherStudents = classData.students.filter(
+      (student) => student._id.toString() !== loggedInUserId.toString()
+    );
+
+    res.status(200).json(otherStudents);
+  } catch (error) {
+    console.log("Error in getUsersByClass controller", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
