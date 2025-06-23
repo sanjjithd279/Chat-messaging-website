@@ -18,10 +18,10 @@ export const useAuthStore = create((set, get) => ({
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
-
       set({ authUser: res.data });
       get().connectSocket();
     } catch (error) {
+      // err in checkauth
       console.log("Error in checkAuth:", error);
       set({ authUser: null });
     } finally {
@@ -35,9 +35,9 @@ export const useAuthStore = create((set, get) => ({
       const res = await axiosInstance.post("/auth/signup", data);
       set({ authUser: res.data });
       toast.success("Account created successfully");
-
       get().connectSocket();
     } catch (error) {
+      // signup fail
       toast.error(error.response.data.message);
     } finally {
       set({ isSigningup: false });
@@ -49,9 +49,9 @@ export const useAuthStore = create((set, get) => ({
       const res = await axiosInstance.post("/auth/login", data);
       set({ authUser: res.data });
       toast.success("Logged in successfully");
-
       get().connectSocket();
     } catch (error) {
+      // login fail
       toast.error(error.response.data.message);
     } finally {
       set({ isLoggingIn: false });
@@ -65,6 +65,7 @@ export const useAuthStore = create((set, get) => ({
       toast.success("Logged out successfully");
       get().disconnectSocket();
     } catch (error) {
+      // logout fail
       toast.error(error.response.data.message);
     }
   },
@@ -76,10 +77,10 @@ export const useAuthStore = create((set, get) => ({
       set({ authUser: res.data });
       toast.success("Profile updated Successfully");
     } catch (error) {
+      // err in update profile
       console.log("error in update profile:", error);
       const errorMessage =
-        error.response?.data?.message ||
-        "An error occurred while updating profile";
+        error.response?.data?.message || "An error happened updating profile";
       toast.error(errorMessage);
     } finally {
       set({ isUpdatingProfile: false });
@@ -93,9 +94,7 @@ export const useAuthStore = create((set, get) => ({
       query: { userId: authUser._id },
     });
     socket.connect();
-
     set({ socket: socket });
-
     socket.on("getOnlineUsers", (userIds) => {
       set({ onlineUsers: userIds });
     });

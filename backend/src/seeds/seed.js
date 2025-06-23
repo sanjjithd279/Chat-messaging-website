@@ -29,21 +29,19 @@ const seedDatabase = async () => {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log("MongoDB connected successfully.");
 
-    // 1. Get all users
+    // get all users
     const users = await User.find({});
     if (users.length === 0) {
-      console.log(
-        "No users found. Please create at least one user before seeding."
-      );
+      console.log("no users found. make a user first before seeding.");
       return;
     }
-    const creatorId = users[0]._id; // Assign the first user as the creator
+    const creatorId = users[0]._id; // first user is creator
 
-    // 2. Clear all existing class assignments from all users to ensure a clean slate
-    console.log("Resetting all user class assignments...");
+    // clear all user class assignments
+    console.log("resetting all user class assignments...");
     await User.updateMany({}, { $set: { classes: [] } });
 
-    // 3. Ensure classes exist (create if they don't) and clear their student lists
+    // make sure classes exist, clear their students
     for (const classInfo of seedClassesData) {
       await Class.updateOne(
         { code: classInfo.code },
@@ -54,16 +52,16 @@ const seedDatabase = async () => {
         { upsert: true }
       );
     }
-    console.log("Cleared student lists from target classes.");
+    console.log("cleared student lists from target classes.");
 
-    // 4. Split users into two groups
+    // split users into 2 groups
     const halfwayIndex = Math.ceil(users.length / 2);
     const firstHalfUsers = users.slice(0, halfwayIndex);
     const secondHalfUsers = users.slice(halfwayIndex);
     const firstHalfUserIds = firstHalfUsers.map((user) => user._id);
     const secondHalfUserIds = secondHalfUsers.map((user) => user._id);
 
-    // 5. Assign first half to CS 1000
+    // assign first half to cs 1000
     const csClass = await Class.findOne({ code: "CS 1000" });
     if (csClass && firstHalfUserIds.length > 0) {
       csClass.students = firstHalfUserIds;
@@ -73,11 +71,11 @@ const seedDatabase = async () => {
         { $addToSet: { classes: csClass._id } }
       );
       console.log(
-        `Enrolled ${firstHalfUserIds.length} users in "${csClass.name}".`
+        `enrolled ${firstHalfUserIds.length} users in "${csClass.name}".`
       );
     }
 
-    // 6. Assign second half to PHYS 2200
+    // assign second half to phys 2200
     const physClass = await Class.findOne({ code: "PHYS 2200" });
     if (physClass && secondHalfUserIds.length > 0) {
       physClass.students = secondHalfUserIds;
@@ -87,16 +85,16 @@ const seedDatabase = async () => {
         { $addToSet: { classes: physClass._id } }
       );
       console.log(
-        `Enrolled ${secondHalfUserIds.length} users in "${physClass.name}".`
+        `enrolled ${secondHalfUserIds.length} users in "${physClass.name}".`
       );
     }
 
-    console.log("Database re-seeding and assignment completed successfully!");
+    console.log("db re-seed and assignment done!");
   } catch (error) {
-    console.error("Error seeding the database:", error);
+    console.error("err seeding db:", error);
   } finally {
     await mongoose.disconnect();
-    console.log("MongoDB disconnected.");
+    console.log("mongodb disconnected.");
   }
 };
 
